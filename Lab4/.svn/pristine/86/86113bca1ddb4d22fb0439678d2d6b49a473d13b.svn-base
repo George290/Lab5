@@ -1,0 +1,258 @@
+package LongArithmetic;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class GUI extends JFrame{
+	
+	private final String[] items = {
+		    "Сложение",
+		    "Вычитание",
+		    "Умножение",
+		    "Деление",
+		    "Сокращение"
+		};
+	private JComboBox<String> choice = new JComboBox<String>(items);
+	private JButton solve = new JButton("Решить");
+	private JTextField fraction1 = new JTextField("1/1", 15);
+	private JTextField fraction2 = new JTextField("1/1", 15);
+	private JTextField result = new JTextField("2", 15);
+	private JLabel operation = new JLabel("+");
+	private JLabel equally = new JLabel("=");
+	
+	private static final long serialVersionUID = 1L;
+
+	public GUI() {
+		super("BigFraction");
+		this.setBounds(100, 100, 400, 200);
+		this.setResizable(false);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		Container container = this.getContentPane();
+		container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		container.setLayout(new GridBagLayout()); 
+		GridBagConstraints constraints = new GridBagConstraints();
+		
+		constraints.fill = GridBagConstraints.NONE; 
+		constraints.insets = new Insets(5, 5, 5, 5); 
+		constraints.weightx = 1.0; 
+		constraints.weighty = 1.0;
+		  
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.gridx = 0; 
+		constraints.gridy = 0;
+		container.add(choice, constraints);
+		choice.addActionListener(new MyActionListener());
+		
+		constraints.fill = GridBagConstraints.HORIZONTAL; 
+		constraints.gridx = 0; 
+		constraints.gridy = 2;
+		container.add(fraction1, constraints);
+		
+		constraints.fill = GridBagConstraints.HORIZONTAL; 
+		constraints.gridx = 1; 
+		constraints.gridy = 2;
+		container.add(operation, constraints);
+		
+		constraints.fill = GridBagConstraints.HORIZONTAL; 
+		constraints.gridx = 2; 
+		constraints.gridy = 2;
+		container.add(fraction2, constraints);
+		
+		constraints.fill = GridBagConstraints.HORIZONTAL; 
+		constraints.gridx = 3; 
+		constraints.gridy = 2;
+		container.add(equally, constraints);
+		
+		constraints.fill = GridBagConstraints.HORIZONTAL; 
+		constraints.gridx = 4; 
+		constraints.gridy = 2;
+		container.add(result, constraints);
+		
+		constraints.fill = GridBagConstraints.HORIZONTAL; 
+		constraints.gridx = 4;
+		constraints.gridy = 3;
+		container.add(solve, constraints);
+		solve.addActionListener(new MyActionListener());
+	}
+	
+    public class MyActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+        	if (e.getSource() == choice){
+        		switch((String)choice.getSelectedItem()) {
+        		case "Сложение":
+        			operation.setVisible(true);
+        			fraction1.setVisible(true);
+        			operation.setText("+");
+        			break;
+        		case "Вычитание":
+        			operation.setVisible(true);
+        			fraction1.setVisible(true);
+        			operation.setText("-");
+        			break;
+        		case "Умножение":
+        			operation.setVisible(true);
+        			fraction1.setVisible(true);
+        			operation.setText("*");
+        			break;
+        		case "Деление":
+        			operation.setVisible(true);
+        			fraction1.setVisible(true);
+        			operation.setText("/");
+        			break;
+        		case "Сокращение":
+        			operation.setVisible(false);
+        			fraction1.setVisible(false);
+        			break;
+        		default:
+        			break;
+        		}
+        	}else {
+        		String bigFraction1;
+        		String bigFraction2;
+        		IsBigFraction isFractionNum1;
+        		IsBigFraction isFractionNum2;
+        		BigFraction fractionNum1;
+				BigFraction fractionNum2;
+        		
+        		if ((String)choice.getSelectedItem() == "Сокращение") {
+        			bigFraction2 = fraction2.getText();
+        			isFractionNum2 = inputBigFraction(bigFraction2);
+        			
+        			if (!isFractionNum2.isInput) {
+        				JOptionPane.showMessageDialog(null, "Ошибка!! Некорректный ввод дроби");
+        			} else {
+        				fractionNum2 = isFractionNum2.getBigFraction();
+        				result.setText(fractionNum2.reduction().toString());
+        			}
+        		} else {
+        			bigFraction1 = fraction1.getText();
+            		bigFraction2 = fraction2.getText();
+            		isFractionNum1 = inputBigFraction(bigFraction1);
+            		isFractionNum2 = inputBigFraction(bigFraction2);
+            		
+            		if (!isFractionNum1.isInput && !isFractionNum2.isInput) {
+            			JOptionPane.showMessageDialog(null, "Ошибка! Некорректный ввод 1 и 2 дроби");
+            		} else {
+            			if (!isFractionNum1.isInput && isFractionNum2.isInput) {
+            				JOptionPane.showMessageDialog(null, "Ошибка!! Некорректный ввод 1 дроби");
+            			} else {
+            				if (isFractionNum1.isInput && !isFractionNum2.isInput) {
+            					JOptionPane.showMessageDialog(null, "Ошибка! Некорректный ввод 2 дроби");
+            				} else {
+            					fractionNum1 = isFractionNum1.getBigFraction();
+            					fractionNum2 = isFractionNum2.getBigFraction();
+            					
+            	        		switch((String)choice.getSelectedItem()) {
+            	        		case "Сложение":
+            	        			result.setText(fractionNum1.add(fractionNum2).reduction().toString());
+            	        			break;
+            	        		case "Вычитание":
+            	        			result.setText(fractionNum1.subtract(fractionNum2).reduction().toString());
+            	        			break;
+            	        		case "Умножение":
+            	        			result.setText(fractionNum1.multiply(fractionNum2).reduction().toString());
+            	        			break;
+            	        		case "Деление":
+            	        			result.setText(fractionNum1.divide(fractionNum2).reduction().toString());
+            	        			break;
+            	        		default:
+            	        			break;
+            	        		}
+            				}
+            			}
+            		}
+        		}
+        	}
+        }
+        
+    	public IsBigFraction inputBigFraction(String fraction) {
+			int len = fraction.length();
+			String dividend = "";
+			String denominator = "";
+			boolean rightInput = false;
+			boolean minusDividend = false;
+			boolean minusDenominator = false;
+			if(len != 0) {
+				int index_slash = fraction.indexOf("/");
+				if((index_slash != -1) && (index_slash != 0) && (index_slash != len - 1)) {
+					dividend = fraction.substring(0, index_slash).trim();
+					int index_minus = dividend.indexOf("-");
+					int index_plus = dividend.indexOf("+");
+								
+					if((index_minus != -1) || (index_plus != -1)) {
+						if(index_minus == 0) {
+							dividend = "-" + dividend.substring(1).trim();
+							minusDividend = true;
+						} else {
+							if(index_plus == 0) {
+								minusDividend = false;
+								dividend = dividend.substring(1).trim();
+							} else {
+								rightInput = false;
+							}
+						}
+					} else {
+						minusDividend = false;
+					}
+									
+					denominator = fraction.substring(index_slash + 1).trim();
+					index_minus = denominator.indexOf("-");
+					index_plus = denominator.indexOf("+");
+									
+					if((index_minus != -1) || (index_plus != -1)) {
+						if(index_minus == 0) {
+							minusDenominator = true;
+							denominator = "-" + denominator.substring(1).trim();
+						} else {
+							if(index_plus == 0) {
+								minusDividend = false;
+								denominator = denominator.substring(1).trim();
+							} else {
+								rightInput = false;
+							}
+						}
+					} else {
+						minusDenominator = false;
+					}
+								
+					if ((dividend.matches("[-+]?\\d+")) && (denominator.matches("[-+]?\\d+")) && (denominator.matches("0+") == false)) {
+						rightInput = true;
+					}else {
+						rightInput = false;
+					}
+				}
+				if(rightInput) {
+					if((minusDenominator == true) && (minusDividend == true)) {
+						dividend = dividend.substring(1).trim();
+						denominator = denominator.substring(1).trim();
+						return new IsBigFraction(true, dividend, denominator);
+					}else {
+						return new IsBigFraction(true, dividend, denominator);
+					}
+				}else{
+					return new IsBigFraction(false, dividend, denominator);
+				}
+			}
+			return new IsBigFraction(false, dividend, denominator);
+    	}
+    }
+    
+    public class IsBigFraction {
+    	public boolean isInput;
+    	public String num;
+    	public String den;
+    	
+    	public IsBigFraction (boolean isInput, String num, String den) {
+    		this.isInput = isInput;
+    		this.num = num;
+    		this.den = den;
+    	}
+    	
+    	public BigFraction getBigFraction() {
+    		return new BigFraction(num, den);
+    	}
+    	
+    }
+}
